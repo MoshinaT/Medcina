@@ -47,7 +47,7 @@ const Search = () => {
         address:'',
         medicines:''
       })});
-    onSearch(state);
+    // onSearch(state);
   };
 
   return (
