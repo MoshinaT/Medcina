@@ -1,34 +1,33 @@
-const path = require('path');
-const axios = require('axios');
-const cors = require('cors');
+﻿require('rootpath')();
 const express = require('express');
+const path = require('path');
 const app = express();
-
-const PORT = process.env.PORT || 5000;
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+// const cors = require('cors');
+const errorHandler = require('_middleware/error-handler');
 
 const buildPath = path.join(__dirname, '..', 'build');
 app.use(express.static(buildPath));
-app.use(cors());
 
-app.get('/jobs', async (req, res) => {
-  try {
-    let { description = '', full_time, location = '', page = 1 } = req.query;
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
-    description = description ? encodeURIComponent(description) : '';
-    location = location ? encodeURIComponent(location) : '';
-    full_time = full_time === 'true' ? '&full_time=true' : '';
-    if (page) {
-      page = parseInt(page);
-      page = isNaN(page) ? '' : `&page=${page}`;
-    }
-    const query = `https://jobs.github.com/positions.json?description=${description}&location=${location}${full_time}${page}`;
-    const result = await axios.get(query);
-    res.send(result.data);
-  } catch (error) {
-    res.status(400).send('Error while getting list of jobs.Try again later.');
-  }
-});
+// allow cors requests from any origin and with credentials
+// app.use(cors({ origin: (origin, callback) => callback(null, true), credentials: true }));
 
-app.listen(PORT, () => {
-  console.log(`server started on port ${PORT}`);
+// api routes
+app.use('/accounts', require('./accounts/accounts.controller'));
+
+// swagger docs route
+app.use('/api-docs', require('_helpers/swagger'));
+
+// global error handler
+app.use(errorHandler);
+
+// start server
+const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 5000;
+app.listen(port, () => {
+    console.log('Server listening on port ' + port);
 });
