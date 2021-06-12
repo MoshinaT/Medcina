@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import JobsContext from '../context/jobs';
 import Alert from 'react-bootstrap/Alert'
+import { BASE_API_URL } from '../utils/constants';
 
 const Search = () => {
   const { onSearch } = useContext(JobsContext);
@@ -38,7 +39,7 @@ const Search = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(state)
   };
-  fetch('http://localhost:5000/accounts', requestOptions)
+  fetch(`${BASE_API_URL}/accounts`, requestOptions)
       .then(response => response.json())
       .then(data => {setShow(true);setState({
         name: '',
@@ -46,7 +47,7 @@ const Search = () => {
         address:'',
         medicines:''
       })});
-   // onSearch(state);
+    onSearch(state);
   };
 
   return (

@@ -17,6 +17,9 @@ export const initiateGetJobs = (data, isLoadMore) => {
         page = isNaN(page) ? '' : `&page=${page}`;
       }
 
+      console.log("search",data);
+
+
       const jobs = await axios.get(
         `${BASE_API_URL}/jobs?description=${description}&location=${location}${full_time}${page}`
       );
